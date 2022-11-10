@@ -1,0 +1,72 @@
+%
+%=============================--D--=============================%
+\clearpage
+\subsection{4. Probabilidade de erro do bit}
+%A ideia do projeto é criarmos um emissor (modulador) que envia um conjunto de bits e sermos capazes com o nosso recetor descodificar a mensagem enviada. 
+%Idealmente, na ausência de ruído branco, a sequência de bits descodificados no recetor seria exatamente iguais à transmitida, mas numa situação real existem sempre bits que são erroneamente detetados no seio do ruído.%
+
+Antes de proceder para as etapas de tratamento de dados subsequentes é fundamental analisar a métrica "probabilidade de erro de bit", $P_e$, com vista a fornecer uma preâmbulo à exposição e análise de resultados. Invocando o Teorema da Probabilidade Total e supondo a equiprobabilidade dos bits `1' e `0', a probabilidade de erro será dada por:
+
+\begin{equation*}
+    P_e= P(\text{erro}\ |\ \text{bit 1}) P(\text{bit 1})\ +\ P(\text{erro}\ |\  \text{bit 0})P(\text{bit 0})\
+\end{equation*}
+\[P_e =\dfrac{P(\text{erro}\ |\ \text{bit 1})\ +\ P(\text{erro}\ |\ \text{bit 0})}{2}\]
+%
+%=============================--D--=============================%
+\subsubsection{4.1 Probabilidade de erro  de bit para um sinal binário polar}
+\label{subsubsec:prob-erro}
+Reconhecendo que o sinal binário polar\footnotemark[10] (onde se encontram os sinais das modulações em análise) pode ser expresso procedimentalmente sobre a forma $y(t)=\sum_{n=-\infty}^{\infty} a_n p(t-nT)$ de amplitudes $a_n=\pm \text{A}$, após a sincronização de símbolo e encontro do instante de amostragem ideal $T_0$ temos:
+
+\begin{equation*}
+    p_k=a_n \cdot p_0=   
+    \begin{cases}
+        +\text{A} \cdot p(T_0)\text{,} & \text{bit 1}\\
+        -\text{A} \cdot p(T_0)\text{,} & \text{bit 0} 
+    \end{cases}
+\end{equation*}
+
+\begin{center}
+     em que $p(t)$ denomina a resposta do sistema transmissão-receção (vide a  \hyperref[subsec:filtro-adaptado]{secção 2.}).\\
+\end{center}
+
+
+Podemos então determinar as probabilidades de erro condicionadas:
+\vskip -1em
+$$
+\begin{tabular}{c}
+$
+    \begin{cases}
+        P(\text{erro}\ |\ \text{bit 1}) = P(\text{erro}\ |\ a_n=+A)=P(n_k < -A\cdot p(T_0))\\
+        P(\text{erro}\ |\ \text{bit 0})=P(\text{erro}\ |\ a_n=-A)=P(n_k > +A\cdot p(T_0))
+    \end{cases}
+$
+\end{tabular}
+\mkern-18mu\mkern-9mu \rightarrow Q\left( \dfrac{A \cdot p(T_0)}{\sigma_n} \right)
+$$
+E subsequentemente concluir que a probabilidade erro de um sinal binário polar é:
+
+\begin{equation*}\label{eq:6}
+    P_e=Q\left( \dfrac{A\cdot p(T_0)}{\sigma_n} \right)
+\end{equation*}
+
+%\begin{center}
+em que $\sigma_n$ é o desvio padrão do ruído no instante de amostragem.   
+%\end{center}
+Reescrevendo a probabilidade em função da energia de bit obtemos:
+
+\begin{equation*}\label{eq:7}
+    P_e=Q\left( \sqrt{\frac{2 E_b}{N_0}} \right)
+\end{equation*}
+que é válida para ambas as modulações em análise\footnotemark[11].
+\vskip 1em
+\noindent\fcolorbox{black}{white}{%
+        \minipage[t]{\dimexpr\linewidth-2\fboxsep-2\fboxrule\relax}
+            \textbf{Nota} $\rightarrow$ Embora coerente para a probabilidade de erro de bit, o mesmo não acontece para a probabilidade de erro de símbolo: $P_\text{es} \approx \text{log}_2(M) P_e$, admitindo um M = 4 para QPSK e M = 2 para BPSK (\hyperref[subsec:intro]{M-PSK}), observamos que:
+            \vskip -1em
+            $$
+                P_{es\_\text{QPSK}} \approx 2P_{es\_\text{BPSK}}
+            $$
+        \endminipage}
+
+\footnotetext[10]{Sinal à saída do filtro adaptado, vide \hyperref[subsec:filtro-adaptado]{secção 2}.}
+\footnotetext[11]{"QPSK can be regarded as a pair of orthogonal BPSK systems (...)  Because they are orthogonal, they don't interfere (to a good approximation), hence the BER curves are largely equivalent."\cite{dsp}}

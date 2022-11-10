@@ -1,0 +1,92 @@
+\newpage
+%=============================--A--=============================%
+\renewcommand{\thefigure}{E\arabic{figure}}
+\renewcommand{\thetable}{E\arabic{table}}
+\setcounter{figure}{0}
+\section{Exposição de dados}
+\subsection{E.1 Método de obtenção de dados}
+
+A extração de dados foi realizada primariamente com recurso a dois \textit{scripts} desenvolvidos em \textit{Python}:
+\vskip -0.25em
+\begin{lstlisting}[caption=\textit{Source code}: \color{white}{\underline{\textit{Script} responsável pela comparação de ficheiros} (bit\_error.py)}, frame=tlrb]{saucecode1}
+#!/bin/python3
+def bit_error(B):
+    file_s = "sent.dat";
+    file_r = "received.dat";
+    
+    if B:
+        OFFSET = 49;
+    else:
+        OFFSET = 49*2;
+
+    SIZE = 27*8;
+    bit_errors = 0;
+    sent = ""; received = "";
+#-----
+    read_s = open(file_s,'rb').read(); 
+    read_r = open(file_r,'rb').read(); 
+
+    for s in read_s:
+        sent += '{0:08b}'.format(s);
+    for r in read_r:
+        received += '{0:08b}'.format(r);
+
+    for i in range(0, SIZE):
+        #print((sent[i], received[i+OFFSET]))
+        if(sent[i] != received[i+OFFSET]):
+            bit_errors += 1;
+
+    print("SENT: \n" + sent[:SIZE] + "\n")
+    print("RECEIVED: \n" + received[OFFSET:OFFSET+SIZE])
+
+    print("Bit errors: " + str(bit_errors));
+    return bit_errors
+
+\end{lstlisting}
+\vskip -0.75em
+\begin{lstlisting}[caption=\textit{Source code}: \color{white}{\underline{\textit{Script} responsável pela automatização da comparação de ficheiros} (sim.py)}, frame=tlrb]{saucecode2}
+#!/bin/python3
+import signal
+from bit_error import bit_error 
+
+B=True;
+BW = 0.0; N = 0.0;
+
+if B:
+    from mdBPSK_copy import mdBPSK as top_block_cls
+else:
+    from mdQPSK_copy import mdQPSK as top_block_cls
+
+#-----
+def sim():
+    N0 = [x/2 for x in range(9)];
+    loop_BW = [round(6/100 * x/10, 3) for x in range(1,43)];
+    #---
+    f = open("data.csv", "w"); f.write("N,BW,bit_errors\n")
+    #--- .csv
+    for N in N0:
+        for BW in loop_BW:
+            tb = top_block_cls(BW,N); #simulação
+            tb.start();
+            #tb.show();
+            tb.wait();
+            b = bit_error(B);
+            f.write(str(N) + "," + str(BW) + "," + str(b) + "\n");
+
+    tb.show();
+    #---
+    f.close();
+    #---
+    def sig_handler(sig=None, frame=None):
+        tb.stop();
+        tb.wait();
+    #---
+    signal.signal(signal.SIGINT, sig_handler);
+    signal.signal(signal.SIGTERM, sig_handler);
+\end{lstlisting}
+
+As alterações necessárias foram aplicadas aos ficheiros \textit{Python} criados de forma automática pelo \textit{software} \textit{GNU Radio} de modo a que se tornassem suscetíveis à automatização requerida para a análise de dados significantes subsequente.
+
+\label{sec:analise}
+\input{src/analise/BPSK}
+\input{src/analise/QPSK}

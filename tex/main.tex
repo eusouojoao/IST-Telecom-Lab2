@@ -1,0 +1,188 @@
+\author{João Gonçalves}
+\newcommand{\authorD}{Daniel Dinis}
+\newcommand{\authorM}{Diogo Costa}
+\newcommand{\studentID}{99995}
+\newcommand{\studentIDD}{99906}
+\newcommand{\studentIDM}{99919}
+\newcommand{\supervisorone}{Prof\textsuperscript{\underline{a}}. Stefânia de Sousa Faria}
+\newcommand{\supervisortwo}{}
+\newcommand{\department}{Engenharia Eletrotécnica e de Computadores}
+\newcommand{\exam}{Telecomunicações}
+
+\title{%
+\LARGE 2\textsuperscript{\underline{o}} Trabalho Laboratorial\\
+\Large Análise de sistemas BPSK e QPSK:\\
+\large Impacto do AWGN na taxa de erro de bit}
+\date{Novembro 2022}
+
+\documentclass[a4paper,12pt]{article}
+\usepackage[left=30mm,top=30mm,right=30mm,bottom=30mm]{geometry}
+\usepackage[bottom]{footmisc}
+\usepackage{etoolbox}
+\usepackage{pgfplots}
+\usepackage{circuitikz}
+\usepackage{booktabs}
+\usepackage[usestackEOL]{stackengine}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{bm}
+\usepackage[export]{adjustbox}
+\usepackage{graphicx}
+\usepackage[font=footnotesize]{caption}
+%\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage[linktoc=all]{hyperref}
+\usepackage[capitalise]{cleveref}
+\usepackage{enumitem,kantlipsum}
+\usepackage[square,numbers,sort]{natbib}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{amssymb}
+\usepackage{babel}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage{graphicx,array}
+\usepackage{breakurl}
+\usepackage{placeins}
+\usepackage{colortbl}
+\def\UrlBreaks{\do\/\do-}
+%\tcbuselibrary{skins,breakable}
+%\usetikzlibrary{shadings,shadows}
+\settocbibname{Referências}
+\usemintedstyle{emacs}
+%\setlength{\parindent}{0pt}
+
+\newenvironment{block}[1]{%
+    \tcolorbox[beamer,%
+    noparskip,breakable,
+    colback=LightBlue,colframe=DarkBlue,%
+    colbacklower=DarkBlue!75!LightBlue,%
+    title=#1]}%
+    {\endtcolorbox}
+
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\tablename}{Tab.}
+\renewcommand{\contentsname}{Índice}
+
+\hypersetup{
+    colorlinks,
+    linkcolor={black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+
+\linespread{1}
+
+\newtheorem{theorem}{Theorem}[section]
+\graphicspath{{figures/}}	
+
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\def\delequal{\mathrel{\ensurestackMath{\stackon[1pt]{=}{\scriptstyle\Delta}}}}
+
+\expandafter\def\expandafter\UrlBreaks\expandafter{\UrlBreaks\do\a%
+\do\b\do\c\do\d\do\e\do\f\do\g\do\h\do\i\do\j\do\k\do\l\do\m\do\n%
+\do\o\do\p\do\q\do\r\do\s\do\t\do\u\do\v\do\w\do\x\do\y\do\z\do\&}
+%---
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{black}{\parbox{\textwidth}{#3}}}
+\captionsetup[lstlisting]{format=listing, labelfont=white, textfont=white}
+\lstdefinestyle{1}{% setup listings
+    language=python,% set programming language
+    inputencoding=latin1,
+    basicstyle=\fontsize{7pt}{7pt}\ttfamily,
+    keywordstyle=\color{blue},% keyword style
+    commentstyle=\color{gray},% comment style
+    numbers=left,% display line numbers on the left side
+    numberstyle=\fontsize{7pt}{0pt},% use small line numbers
+    numbersep=10pt,% space between line numbers and code
+    tabsize=2,% sizes of tabs
+    showstringspaces=false,% do not replace spaces in strings by a certain character
+    captionpos=t,% positioning of the caption above
+    breaklines=true,% automatic line breaking
+    escapeinside={(*}{*)},% escaping to LaTeX
+    fancyvrb=true,% verbatim code is typset by listings
+    extendedchars=true,% prohibit extended chars (chars of codes 128--255)
+    literate={"}{{\texttt{"}}}1 {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ç}{{\c{c}}}1 {ã}{{\~a}}1 {õ}{{\~o}}1 {à}{{\`a}}1 {À}{{\`A}}1 {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'A}}1 {~}{{$\bm\sim$}}1 {<=}{{$\bm\le$}}1{>=}{{$\bm\ge$}}1{!=}{{$\bm\neq$}}1 {^}{{$^{\bm\wedge}$}}1 ,% item to replace, text, length of chars
+    alsoletter={.<-},% becomes a letter
+    alsoother={$},% becomes other
+    otherkeywords={!=, ~, $, \&, \%/\%, \%*\%, \%\%, <-, <<-, /},% other keywords
+    deletekeywords={de, R}% remove keywords
+}
+\lstset{style=1}
+%----------------------------------TITLE PAGE -----------------------------------
+\makeatletter
+\def\maketitle{
+  \begin{center}\leavevmode
+       \normalfont
+       \includegraphics[width=0.55\columnwidth]{IST.pdf}
+       \vskip 1.5cm   
+       \textsc{\large \department}\\
+       \vskip 1.5cm
+       \rule{\linewidth}{0.2 mm} %\\
+       {\large \exam}\\[1 cm]
+       {\huge \bfseries \@title \par}
+       \vspace{1cm}
+	\rule{\linewidth}{0.2 mm} \\[1.5 cm]
+	 
+	\begin{minipage}[t]{0.45\textwidth}
+		\begin{flushleft} \large
+			\emph{Autores:}\\
+                \textbf{\authorD} : \studentIDD\\
+                \textbf{\authorM} : \studentIDM\\
+			\textbf{\@author} : \studentID
+		\end{flushleft}
+	\end{minipage}
+	\begin{minipage}[t]{0.45\textwidth}
+	   \begin{flushright} \large
+			\ifdefempty{\supervisortwo}{\emph{Supervisora:\\}}{\emph{Supervisores:\\}}
+			\supervisorone\\
+			\ifdefempty{\supervisortwo}{}{\supervisortwo\\}
+		\end{flushright}
+	\end{minipage}
+	\vfill
+	{\Large \@date\par}
+   \end{center}
+   %\vfill
+   %\null
+   \cleardoublepage
+  }
+\makeatother
+
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+%-------------------------------- ENDTITLE PAGE ----------------------------------
+
+\pgfplotsset{compat=1.18}
+\setcounter{secnumdepth}{-2}
+\begin{document}
+    \sloppy
+    %% title page
+    \pagenumbering{gobble}
+    \maketitle
+    %% toc
+    \tableofcontents
+    %% body
+    \newpage
+    \pagenumbering{arabic}
+    \input{src/intro}
+    \input{src/analise}
+    \input{src/conclusao}
+    %% biblio/webgraphy
+    \clearpage
+    \bibliographystyle{unsrtnat}
+    \nocite{*}
+    {\footnotesize
+    \bibliography{refs}}
+    %% attachments
+    %\newpage
+    %\input{appendix.tex}
+
+\end{document}
