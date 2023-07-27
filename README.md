@@ -1,4 +1,4 @@
-# IST-Telecom-Lab2 2022/2023 | [LAB 2 - BPSK & QPSK systems](LAB_2_2022.pdf)
+# IST-Telecom-Lab2 2022/2023 | [LAB 2 - BPSK & QPSK](LAB_2_2022.pdf)
 
 ## Objective
 The objective of this project is to analyze a Binary Phase Shift Keying (BPSK) system and design a Quadrature Phase Shift Keying (QPSK) demodulator with symbol synchronization using the GNU Radio platform.
